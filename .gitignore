@@ -46,3 +46,4 @@ app.*.map.json
 
 # WireGuard конфигурация
 assets/wireguard_config.conf
+release

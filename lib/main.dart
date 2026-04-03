@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:wireguard_flutter_plus/wireguard_flutter_plus.dart';
+import 'services/device_manager.dart';
+import 'services/wireguard_api_service.dart';
+import 'services/config_parser.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -29,21 +33,27 @@ class VpnControlPage extends StatefulWidget {
   State<VpnControlPage> createState() => _VpnControlPageState();
 }
 
+
+
 class _VpnControlPageState extends State<VpnControlPage> with SingleTickerProviderStateMixin {
+  String _deviceUuid = 'Загрузка...';
   bool _isConnected = false;
   bool _isLoading = false;
   String _statusMessage = 'Готов к подключению';
   int _rxBytes = 0;
   int _txBytes = 0;
-  
   final _vpn = WireGuardFlutter.instance;
-  
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  String? _cachedConfig;
 
+  
   @override
   void initState() {
     super.initState();
+    _loadDeviceUuid();
+    _initializeVpn();
+    _startTrafficUpdates();
     
     _pulseController = AnimationController(
       duration: const Duration(seconds: 2),
@@ -57,6 +67,49 @@ class _VpnControlPageState extends State<VpnControlPage> with SingleTickerProvid
     _initializeVpn();
     _startTrafficUpdates();
   }
+  
+Future<void> _loadDeviceUuid() async {
+  final deviceManager = DeviceManager();
+  final uuid = await deviceManager.getDeviceUuid();
+  
+  try {
+    final configContent = await rootBundle.loadString('assets/wireguard_config.conf');
+    final apiConfig = ConfigParser.parseApiConfig(configContent);
+    
+    final apiService = WireGuardApiService(
+      baseUrl: apiConfig.server,
+      username: 'admin',
+      password: apiConfig.password,
+    );
+    
+    // Ищем клиента по полю name (оно равно UUID)
+    final existingClient = await apiService.findClientByUuid(uuid);
+    
+    if (existingClient != null) {
+      print('Клиент найден: ${existingClient['id']}');
+      final config = await apiService.getClientConfig(existingClient['id'].toString());
+      _cachedConfig = config;
+      setState(() {
+        _deviceUuid = '$uuid (найден)';
+      });
+    } else {
+      print('Клиент не найден, создаём нового');
+      // Создаём с name = uuid (без лишних слов)
+      final newClient = await apiService.createClient(uuid, uuid);
+      print('Новый клиент ID: ${newClient['id']}');
+      final config = await apiService.getClientConfig(newClient['id'].toString());
+      _cachedConfig = config;
+      setState(() {
+        _deviceUuid = '$uuid (новый)';
+      });
+    }
+  } catch (e) {
+    print('Ошибка: $e');
+    setState(() {
+      _deviceUuid = '$uuid (ошибка)';
+    });
+  }
+}
   
   @override
   void dispose() {
@@ -108,6 +161,9 @@ class _VpnControlPageState extends State<VpnControlPage> with SingleTickerProvid
   }
 
   Future<void> _connectVpn() async {
+
+    //print('Конфигурация: $_cachedConfig');
+
     setState(() {
       _isLoading = true;
       _statusMessage = 'Подключение...';
@@ -116,13 +172,14 @@ class _VpnControlPageState extends State<VpnControlPage> with SingleTickerProvid
     _pulseController.forward();
 
     try {
-      final configString = await rootBundle.loadString('assets/wireguard_config.conf');
-      final (serverAddress, wgQuickConfig) = _parseConfig(configString);
+      
+      // Использовать конфигурацию, полученную с сервера при запуске:
+      final (serverAddress, wgQuickConfig) = _parseConfig(_cachedConfig!);
       
       await _vpn.startVpn(
         serverAddress: serverAddress,
         wgQuickConfig: wgQuickConfig,
-        providerBundleIdentifier: 'com.example.notvpn',
+        providerBundleIdentifier: 'com.gladosfan.notvpn',
       );
       
       setState(() {
@@ -249,6 +306,20 @@ class _VpnControlPageState extends State<VpnControlPage> with SingleTickerProvid
                     ),
                   );
                 },
+              ),
+              const SizedBox(height: 20),
+              // отображение UUID мелким текстом
+              Container(
+                padding: const EdgeInsets.all(8),
+                child: Text(
+                  'ID устройства: $_deviceUuid',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey,
+                    fontFamily: 'monospace',
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
               const SizedBox(height: 20),
               Text(
