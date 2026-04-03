@@ -1,83 +1,48 @@
 # notVPN
-Простое приложение для Windows.
+
+Простое VPN-приложение на базе WireGuard с динамической конфигурацией.
 
 ## Возможности
 
-- Подключение/отключение одной кнопкой
+- Подключение/отключение VPN одной кнопкой
+- Автоматическое получение уникальной конфигурации с сервера
 - Отображение статуса подключения
 - Счётчик трафика (получено/отправлено)
+- Анимация процесса подключения
+- Каждое устройство получает свой ключ и IP-адрес
 
 ## Установка
-EXE-установщик из релизов:
-```bash
-https://github.com/GLaDOSfan/not_VPN/releases/tag/1.0
-```
 
-### Из установщика
+### Windows
 
-1. Скачайте файл `notVPN_Setup.exe` из раздела [Releases](https://github.com/gladosfan/notVPN/releases)
+1. Скачайте `not_vpn_windows.exe` из раздела [Releases](https://github.com/GLaDOSfan/not_VPN/releases)
 2. Запустите установщик
 3. Следуйте инструкциям на экране
 
-### Из исходников
+### Android
 
-```bash
-git clone https://github.com/gladosfan/notVPN.git
-cd notVPN
-flutter pub get
-flutter run -d windows
-```
+1. Скачайте `not_vpn_android.apk` из раздела [Releases](https://github.com/GLaDOSfan/not_VPN/releases)
+2. Разрешите установку из неизвестных источников
+3. Установите приложение
 
-## Системные требования
+## Требования
 
+### Windows
 - Windows 10 / Windows 11 (64-bit)
 - Права администратора (требуются для работы WireGuard)
 
-## Сборка приложения
+### Android
+- Android 5.0 (API 21) или выше
+- Разрешение на создание VPN-подключения
 
-```bash
-# Сборка Debug версии
-flutter run -d windows
+## Сборка из исходников
 
-# Сборка Release версии
+git clone https://github.com/GLaDOSfan/not_VPN.git
+cd not_VPN
+flutter pub get
+
+# Windows
 flutter build windows --release
 
-# Путь к собранному EXE
-# build\notvpn_setup.exe
-```
-
-## Создание установщика
-
-Для создания установщика используется Inno Setup:
-
-1. Установите [Inno Setup](https://jrsoftware.org/isdl.php)
-2. Откройте файл `installer.iss`
-3. Нажмите `Ctrl+F9` для компиляции
-
-## Структура проекта
-
-```
-notVPN/
-├── lib/
-│   └── main.dart          # Основной код приложения
-├── assets/
-│   └── wireguard_config.conf  # Конфигурация WireGuard (локально)
-├── windows/               # Windows-специфичный код
-└── pubspec.yaml           # Зависимости проекта
-```
-
-## Технологии
-
-- [Flutter](https://flutter.dev) — фреймворк для кроссплатформенной разработки
-- [wireguard_flutter_plus](https://pub.dev/packages/wireguard_flutter_plus) — плагин для WireGuard
-- [Inno Setup](https://jrsoftware.org/isdl.php) — создание установщика
-
-## Лицензия
-
-MIT License
-
-## Контакты
-Разработчик: Aleksandr Romanov
-```
-Email: gladosfan@outlook.com
-```
+# Android
+flutter build apk --release
