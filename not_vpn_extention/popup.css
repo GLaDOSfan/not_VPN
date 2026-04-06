@@ -1,0 +1,197 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 380px;
+  min-height: 300px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  padding: 16px;
+}
+
+/* Заголовок */
+.header {
+  background: #4caf50;
+  color: white;
+  padding: 14px 16px;
+  margin: -16px -16px 16px -16px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Карточка статуса */
+.status-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.status-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.status-text.connected {
+  color: #4caf50;
+}
+
+.status-text.disconnected {
+  color: #9e9e9e;
+}
+
+/* Кнопка включения прокси */
+.proxy-button {
+  margin-bottom: 16px;
+}
+
+.proxy-toggle {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.proxy-toggle.enabled {
+  background: #4caf50;
+}
+
+.proxy-toggle.enabled:hover {
+  background: #45a049;
+}
+
+.proxy-toggle.disabled {
+  background: #f44336;
+}
+
+.proxy-toggle.disabled:hover {
+  background: #da190b;
+}
+
+.proxy-toggle:active {
+  transform: scale(0.98);
+}
+
+/* Карточка статистики */
+.traffic-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.traffic-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.traffic-stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.traffic-item {
+  text-align: center;
+}
+
+.traffic-label {
+  font-size: 12px;
+  color: #9e9e9e;
+  margin-bottom: 5px;
+}
+
+.traffic-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Список автоматически добавленных доменов */
+.auto-added-list {
+  max-height: 150px;
+  overflow-y: auto;
+  margin: 10px 0;
+}
+
+.auto-domain-item {
+  background: #e8f5e9;
+  padding: 6px 10px;
+  margin: 4px 0;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: monospace;
+  color: #2e7d32;
+  border-left: 3px solid #4caf50;
+  word-break: break-all;
+}
+
+.empty-list {
+  text-align: center;
+  padding: 12px;
+  color: #999;
+  font-size: 12px;
+}
+
+.auto-note {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Защищенный бейдж */
+.protected-badge {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.protected-text {
+  color: #4caf50;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Скроллбар */
+.auto-added-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.auto-added-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.auto-added-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}

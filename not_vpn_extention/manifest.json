@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "notVPN Proxy",
+  "version": "1.0.0",
+  "description": "Автоматический прокси для доступа к нужным сайтам",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "proxy",
+    "webRequest",
+    "webRequestAuthProvider"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

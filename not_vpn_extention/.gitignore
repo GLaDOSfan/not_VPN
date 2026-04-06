@@ -1,0 +1,4 @@
+# .gitignore
+auth.js
+*.secret.js
+.DS_Store
