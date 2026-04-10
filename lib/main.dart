@@ -78,27 +78,37 @@ Future<void> _loadDeviceUuid() async {
     
     final apiService = WireGuardApiService(
       baseUrl: apiConfig.server,
-      username: 'admin',
       password: apiConfig.password,
     );
+    
+    // Проверим список всех клиентов
+    final allClients = await apiService.getClients();
+    print('Все клиенты на сервере: ${allClients.length}');
+    for (var client in allClients) {
+      print('Клиент: id=${client['id']}, name=${client['name']}');
+    }
     
     // Ищем клиента по полю name (оно равно UUID)
     final existingClient = await apiService.findClientByUuid(uuid);
     
     if (existingClient != null) {
-      print('Клиент найден: ${existingClient['id']}');
+      print('Клиент найден: id=${existingClient['id']}, name=${existingClient['name']}');
       final config = await apiService.getClientConfig(existingClient['id'].toString());
       _cachedConfig = config;
       setState(() {
         _deviceUuid = '$uuid (найден)';
       });
     } else {
-      print('Клиент не найден, создаём нового');
-      // Создаём с name = uuid (без лишних слов)
+      print('Клиент с name=$uuid не найден, создаём нового');
+      // Создаём с name = uuid
       final newClient = await apiService.createClient(uuid, uuid);
-      print('Новый клиент ID: ${newClient['id']}');
-      final config = await apiService.getClientConfig(newClient['id'].toString());
+      print('Новый клиент создан: id=${newClient['id']}, name=${newClient['name']}');
+      
+      // Используем id из ответа для получения конфигурации
+      final clientId = newClient['id'].toString();
+      final config = await apiService.getClientConfig(clientId);
       _cachedConfig = config;
+      
       setState(() {
         _deviceUuid = '$uuid (новый)';
       });
@@ -106,7 +116,7 @@ Future<void> _loadDeviceUuid() async {
   } catch (e) {
     print('Ошибка: $e');
     setState(() {
-      _deviceUuid = '$uuid (ошибка)';
+      _deviceUuid = '$uuid (ошибка: ${e.toString()})';
     });
   }
 }
